@@ -1,27 +1,24 @@
 package com.example.mangaupdatetracker.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.mangaupdatetracker.databinding.FragmentHomeBinding
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.example.mangaupdatetracker.model.TestURLResponse
+import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
+
+private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    var TAG = "HomeFragment"
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -32,19 +29,33 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        /* handle test url button onclick */
         binding.testUrlButtonId.setOnClickListener{
+            view?.hideKeyboard()
+            // Taking url from input
             val urlPage = binding.urlId.text.toString()
-            GlobalScope.launch{
-                val answer = async { getWeb(urlPage) }
-                //.d(TAG, "HTML: ${answer.await()}")
+            // GlobalScope used to launch coroutines
+            GlobalScope.launch(Dispatchers.IO) {
+                // asynchronously execute testWebUrl method and wait for results
+                val answer = async { testWebUrl(urlPage) }
+                // used to update element attributes from the main thread
+                withContext(Dispatchers.Main) {
+                    if(answer.await().isValid){
+                        binding.titleId.setText(answer.await().title)
+                        binding.addUrlButtonId.isEnabled = true
+                        binding.statusId.text = "There are ${answer.await().numberOfChapters} chapters"
+                    }else{
+                        binding.addUrlButtonId.isEnabled = false
+                        binding.statusId.text = "Bad URL"
+                        binding.titleId.setText("")
+                    }
+                }
+
             }
         }
-
         return root
     }
 
@@ -54,26 +65,30 @@ class HomeFragment : Fragment() {
     }
 
 
-
-    suspend fun getWeb(url:String): String {
-        var htmlOutPut = ""
+    /**
+     * Checks if the given URL is valid for parsing
+     */
+    private fun testWebUrl(url:String): TestURLResponse {
+        val isURLValid = TestURLResponse()
         try {
             val doc:Document = Jsoup.connect(url).get()
             val chapters = doc.select(".panel-story-chapter-list > .row-content-chapter")
             val aTags = chapters.select("a")
-            val img = doc.select(".story-info-left > .info-image > .img-loading").first()?.attr("src")
-            Log.d(TAG, "IMAGE $img")
-
-            for (a in aTags){
-                val links: String = a.attr("href")
-                val titles: String = a.attr("title")
-                Log.d(TAG, titles)
-                Log.d(TAG, links)
+            // checks if a tags exist and sets isURLValid to true or false
+            if(aTags.size > 0){
+                isURLValid.isValid = true
+                isURLValid.numberOfChapters = aTags.size
+                isURLValid.title = doc.select(".story-info-right > h1").first()?.text().toString()
             }
-
         }catch (e:Exception){
-            Log.e("shamsi", e.toString())
+            Log.e(TAG, e.toString())
         }
-        return htmlOutPut
+        return isURLValid
+    }
+
+    // Used to hide keyboard
+    private fun View.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
     }
 }
