@@ -2,29 +2,26 @@ package com.example.mangaupdatetracker.controller
 
 import android.util.Log
 import com.example.mangaupdatetracker.model.AllDataOfManga
+import com.example.mangaupdatetracker.parsers.Leviatanscans
 import com.example.mangaupdatetracker.parsers.Manganato
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import java.net.URI
 import java.net.URISyntaxException
 
 private const val TAG = "Controller12"
-class Controller(url: String, private var latestChapterTitle: String) {
 
-    //Scraping the url and saving it into doc
-    private var doc: Document = Jsoup.connect(url)
-        .userAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-        .get()//leviatanscans, manganato, zeroscans, realmscans, xcalibrscans, luminousscans, flamescans
+class Controller(private var url: String, private var lastChapterTitle: String) {
+    //x leviatanscans, x manganato, zeroscans, realmscans, xcalibrscans, luminousscans, flamescans
     private var mangaData = AllDataOfManga()
     private var domain: String = getDomainName(url)
 
     /**
      * Extracting important info from specific domains
      */
-    fun control(): AllDataOfManga{
+    fun initialize(): AllDataOfManga {
         // Switch statement for all the different domains
-        when(domain){
-            "manganato.com" -> Manganato(doc, mangaData, latestChapterTitle).extractor()
+        when (domain) {
+            "manganato.com" -> Manganato(url, mangaData, lastChapterTitle).extractor()
+            "en.leviatanscans.com" -> Leviatanscans(url, mangaData, lastChapterTitle).extractor()
             else -> Log.e(TAG, "Domain does not work")
         }
         return mangaData

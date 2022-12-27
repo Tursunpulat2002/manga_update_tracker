@@ -61,13 +61,21 @@ class HomeFragment : Fragment() {
      */
     private fun testWebUrl(url:String): TestURLResponse {
         val isURLValid = TestURLResponse()
-        val controller = Controller(url, binding.latestReadChapterTitleId.text.toString())
-        val mangaData = controller.control()
+        val controller = Controller(url, binding.lastReadChapterTitleId.text.toString())
+        val mangaData = controller.initialize()
 
         if(mangaData.numberOfChapters > 0) {
             isURLValid.isValid = true
             isURLValid.numberOfChapters = mangaData.numberOfChapters
         }
+
+        // testing all parsers
+//        Log.d(TAG, mangaData.title)
+//        Log.d(TAG, mangaData.imgSource)
+//        Log.d(TAG, mangaData.newestChapter)
+//        Log.d(TAG, mangaData.newestChapterURL)
+//        Log.d(TAG, mangaData.lastReadChapter)
+//        Log.d(TAG, mangaData.lastReadChapterURL)
 
         return isURLValid
     }
