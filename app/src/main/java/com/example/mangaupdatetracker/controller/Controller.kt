@@ -4,13 +4,14 @@ import android.util.Log
 import com.example.mangaupdatetracker.model.AllDataOfManga
 import com.example.mangaupdatetracker.parsers.Leviatanscans
 import com.example.mangaupdatetracker.parsers.Manganato
+import com.example.mangaupdatetracker.parsers.Realmscans
 import java.net.URI
 import java.net.URISyntaxException
 
 private const val TAG = "Controller12"
 
 class Controller(private var url: String, private var lastChapterTitle: String) {
-    //x leviatanscans, x manganato, zeroscans, realmscans, xcalibrscans, luminousscans, flamescans
+    //v leviatanscans, v manganato, x zeroscans, v realmscans, xcalibrscans, luminousscans, flamescans
     private var mangaData = AllDataOfManga()
     private var domain: String = getDomainName(url)
 
@@ -22,8 +23,11 @@ class Controller(private var url: String, private var lastChapterTitle: String) 
         when (domain) {
             "manganato.com" -> Manganato(url, mangaData, lastChapterTitle).extractor()
             "en.leviatanscans.com" -> Leviatanscans(url, mangaData, lastChapterTitle).extractor()
+            "realmscans.com" -> Realmscans(url, mangaData, lastChapterTitle).extractor()
             else -> Log.e(TAG, "Domain does not work")
         }
+
+//        Log.d(TAG, domain)
         return mangaData
     }
 
