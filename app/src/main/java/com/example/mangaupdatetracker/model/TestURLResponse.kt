@@ -5,6 +5,5 @@ package com.example.mangaupdatetracker.model
  */
 class TestURLResponse {
     var isValid: Boolean = false
-    var title: String = ""
     var numberOfChapters: Int = 0
 }
