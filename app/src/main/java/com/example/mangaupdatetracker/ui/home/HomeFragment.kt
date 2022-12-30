@@ -69,7 +69,7 @@ class HomeFragment : Fragment() {
             isURLValid.numberOfChapters = mangaData.numberOfChapters
         }
 
-        // testing all parsers
+//        // testing all parsers
 //        Log.d(TAG, mangaData.title)
 //        Log.d(TAG, mangaData.imgSource)
 //        Log.d(TAG, mangaData.newestChapter)

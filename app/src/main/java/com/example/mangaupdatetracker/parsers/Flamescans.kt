@@ -6,23 +6,24 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 
-private const val TAG = "Realmscans"
-class Realmscans(url: String, private var mangaData: AllDataOfManga, private var lastChapter: String) {
+private const val TAG = "Flamescans"
+class Flamescans(url: String, private var mangaData: AllDataOfManga, private var lastChapter: String) {
     //Scraping the url and saving it into doc
     private var doc: Document = Jsoup.connect(url)
         .userAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
         .get()
 
     /**
-     * Used to extract info from just Realm Scans
+     * Used to extract info from just Flamescans
      */
     fun extractor(){
         /**
-         * Used to extract info from just Realm scans
+         * Used to extract info from just Flamescans
          */
         try {
-            val chapters: Elements = doc.select("div.eph-num")
-            val aTags = chapters.select("a[href*=realmscans.com]")
+            lastChapter += "/"
+            val chapters: Elements = doc.select("ul li[data-num]")
+            val aTags = chapters.select("a[href*=flamescans.org]")
             // checks if a tags exist and sets isURLValid to true or false
             if(aTags.size > 0){
                 mangaData.numberOfChapters = aTags.size
@@ -32,11 +33,10 @@ class Realmscans(url: String, private var mangaData: AllDataOfManga, private var
                     ?.text()
                     .toString()
                 mangaData.newestChapterURL = aTags.first()?.attr("href").toString()
-                mangaData.lastReadChapter = aTags.select("a[href*=$lastChapter]").last()?.select("span.chapternum")
+                mangaData.lastReadChapter = aTags.select("a[href$=$lastChapter]").last()?.select("span.chapternum")
                     ?.text()
                     .toString()
-                mangaData.lastReadChapterURL = aTags.select("a[href*=$lastChapter]").last()?.attr("href")
-                    .toString()
+                mangaData.lastReadChapterURL = aTags.select("a[href$=$lastChapter]").last()?.attr("href").toString()
             }
         }catch (e:Exception){
             Log.e(TAG, e.toString())

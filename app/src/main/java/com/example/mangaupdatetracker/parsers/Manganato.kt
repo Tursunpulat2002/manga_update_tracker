@@ -28,8 +28,8 @@ class Manganato(url: String, private var mangaData: AllDataOfManga, private var 
                     .first()?.attr("src").toString()
                 mangaData.newestChapter = aTags.first()?.attr("title").toString()
                 mangaData.newestChapterURL = aTags.first()?.attr("href").toString()
-                mangaData.lastReadChapter = aTags.select("a[title*=$lastChapter]").attr("title").toString()
-                mangaData.lastReadChapterURL = aTags.select("a[title*=$lastChapter]").attr("href").toString()
+                mangaData.lastReadChapter = aTags.select("a[title*=$lastChapter]").last()?.attr("title").toString()
+                mangaData.lastReadChapterURL = aTags.select("a[title*=$lastChapter]").last()?.attr("href").toString()
             }
         }catch (e:Exception){
             Log.e(TAG, e.toString())

@@ -38,8 +38,10 @@ class Leviatanscans(private var url: String, private var mangaData: AllDataOfMan
                 mangaData.imgSource = doc.select(".profile-manga > .tab-summary > .summary_image > a > .img-responsive").attr("src").toString()
                 mangaData.newestChapter = aTags.select("a").first()?.text().toString()
                 mangaData.newestChapterURL = aTags.first()?.attr("href").toString()
-                mangaData.lastReadChapter = aTags.select("a[href*=$lastChapter]").select("a").text().toString()
-                mangaData.lastReadChapterURL = aTags.select("a[href*=$lastChapter]").attr("href").toString()
+                mangaData.lastReadChapter = aTags.select("a[href*=$lastChapter]").last()?.select("a")
+                    ?.text()
+                    .toString()
+                mangaData.lastReadChapterURL = aTags.select("a[href*=$lastChapter]").last()?.attr("href").toString()
             }
         }catch (e:Exception){
             Log.e(TAG, e.toString())
