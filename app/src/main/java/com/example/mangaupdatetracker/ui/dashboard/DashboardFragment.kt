@@ -39,7 +39,7 @@ class DashboardFragment : Fragment() {
 
         binding.printId.setOnClickListener{
             GlobalScope.launch(Dispatchers.IO) {
-
+                Log.d(TAG, db.dataDao().getAll().toString())
             }
         }
 
