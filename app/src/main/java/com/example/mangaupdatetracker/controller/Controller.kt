@@ -28,7 +28,7 @@ class Controller(private var url: String, private var lastChapterTitle: String) 
             "flamescans.org" -> Flamescans(url, mangaData, lastChapterTitle).extractor()
             else -> Log.e(TAG, "Domain does not work")
         }
-
+        mangaData.mangaURL = url
 //        Log.d(TAG, domain)
         return mangaData
     }

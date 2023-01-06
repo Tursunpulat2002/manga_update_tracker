@@ -103,14 +103,17 @@ class HomeFragment : Fragment() {
     // Converts manga data to data entity
     private fun convertData(inputData:AllDataOfManga): DataEntity{
         return DataEntity(
-            0,
+            inputData.id,
             inputData.numberOfChapters,
             inputData.title,
             inputData.imgSource,
+            inputData.mangaURL,
             inputData.newestChapter,
             inputData.newestChapterURL,
             inputData.lastReadChapter,
-            inputData.lastReadChapterURL
+            inputData.lastReadChapterURL,
+            inputData.lastNewestChapter,
+            inputData.lastNewestChapterURL
         )
     }
 
